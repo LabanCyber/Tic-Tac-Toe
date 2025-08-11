@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>X O X</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #1ff703;
+      margin-top: 50px;
+    }
+    h1 {
+      color: #0a0a0a;
+    }
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    .cell {
+      width: 100px;
+      height: 100px;
+      background: rgb(0, 174, 255);
+      border: 2px solid #444;
+      font-size: 2.5em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    #status {
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tic Tac Toe</h1>
+  <div id="board"></div>
+  <div id="status">Giliran: Pemain X</div>
+  <button onclick="resetGame()">Ulangi Permainan</button>
+
+  <script>
+    const boardElement = document.getElementById("board");
+    const statusElement = document.getElementById("status");
+
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let gameOver = false;
+
+    function createBoard() {
+      boardElement.innerHTML = "";
+      board.forEach((cell, index) => {
+        const cellDiv = document.createElement("div");
+        cellDiv.classList.add("cell");
+        cellDiv.textContent = cell;
+        cellDiv.addEventListener("click", () => handleMove(index));
+        boardElement.appendChild(cellDiv);
+      });
+    }
+
+    function handleMove(index) {
+      if (board[index] !== "" || gameOver) return;
+      board[index] = currentPlayer;
+      createBoard();
+      if (checkWinner()) {
+        statusElement.textContent = `🎉 Pemain ${currentPlayer} menang!`;
+        gameOver = true;
+      } else if (board.every(cell => cell !== "")) {
+        statusElement.textContent = "🤝 Permainan seri!";
+        gameOver = true;
+      } else {
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        statusElement.textContent = `Giliran: Pemain ${currentPlayer}`;
+      }
+    }
+
+    function checkWinner() {
+      const winPatterns = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // baris
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // kolom
+        [0, 4, 8], [2, 4, 6]             // diagonal
+      ];
+      return winPatterns.some(pattern => 
+        board[pattern[0]] === currentPlayer &&
+        board[pattern[1]] === currentPlayer &&
+        board[pattern[2]] === currentPlayer
+      );
+    }
+
+    function resetGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      currentPlayer = "X";
+      gameOver = false;
+      statusElement.textContent = `Giliran: Pemain ${currentPlayer}`;
+      createBoard();
+    }
+
+    createBoard();
+  </script>
+
+</body>
+</html>
